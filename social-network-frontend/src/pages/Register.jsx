@@ -1,40 +1,32 @@
-import { useState, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
+const Register = () => {
+  const { register } = useContext(AuthContext);
+  const [form, setForm] = useState({ name: "", username: "", email: "", password: "" });
 
-export default function Register() {
-const { register } = useContext(AuthContext);
-const [form, setForm] = useState({ name: "", username: "", email: "", password: "", password_confirmation: "" });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    register(form);
+  };
 
-
-const handleChange = (e) => {
-setForm({ ...form, [e.target.name]: e.target.value });
+  return (
+    <form onSubmit={handleSubmit} className="p-6">
+      <input type="text" placeholder="Name" value={form.name}
+        onChange={(e) => setForm({ ...form, name: e.target.value })}
+        className="border p-2 w-full mb-2"/>
+      <input type="text" placeholder="Username" value={form.username}
+        onChange={(e) => setForm({ ...form, username: e.target.value })}
+        className="border p-2 w-full mb-2"/>
+      <input type="email" placeholder="Email" value={form.email}
+        onChange={(e) => setForm({ ...form, email: e.target.value })}
+        className="border p-2 w-full mb-2"/>
+      <input type="password" placeholder="Password" value={form.password}
+        onChange={(e) => setForm({ ...form, password: e.target.value })}
+        className="border p-2 w-full mb-2"/>
+      <button className="bg-green-500 text-white px-4 py-2 rounded">Register</button>
+    </form>
+  );
 };
 
-
-const handleSubmit = async (e) => {
-e.preventDefault();
-await register(form);
-};
-
-
-return (
-<div className="flex items-center justify-center h-screen">
-<form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-xl p-8 w-96">
-<h2 className="text-xl font-bold mb-4">Register</h2>
-{Object.keys(form).map((field) => (
-<input
-key={field}
-type={field.includes("password") ? "password" : "text"}
-name={field}
-placeholder={field}
-value={form[field]}
-onChange={handleChange}
-className="w-full mb-3 p-2 border rounded"
-/>
-))}
-<button className="w-full bg-green-600 text-white p-2 rounded">Register</button>
-</form>
-</div>
-);
-}
+export default Register;

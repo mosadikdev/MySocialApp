@@ -1,25 +1,57 @@
-import { useEffect, useState } from "react";
-import api from "../services/api";
+import React, { useEffect, useState, useContext } from "react";
+import axios from "../utils/axios";
+import { AuthContext } from "../context/AuthContext";
 
+const Home = () => {
+  const { user } = useContext(AuthContext);
+  const [posts, setPosts] = useState([]);
+  const [content, setContent] = useState("");
 
-export default function Home() {
-const [posts, setPosts] = useState([]);
+  const fetchPosts = async () => {
+    const res = await axios.get("/posts");
+    setPosts(res.data);
+  };
 
+  const addPost = async (e) => {
+    e.preventDefault();
+    await axios.post("/posts", { content });
+    setContent("");
+    fetchPosts();
+  };
 
-useEffect(() => {
-api.get("/posts").then((res) => setPosts(res.data.data));
-}, []);
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
+  return (
+    <div className="p-6">
+      {user && (
+        <form onSubmit={addPost} className="mb-4">
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="What's on your mind?"
+            className="w-full border p-2 rounded"
+          />
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
+          >
+            Post
+          </button>
+        </form>
+      )}
 
-return (
-<div className="p-4">
-<h2 className="text-2xl font-bold mb-4">Feed</h2>
-{posts.map((post) => (
-<div key={post.id} className="border rounded-xl p-4 mb-4">
-<p className="font-semibold">{post.user.username}</p>
-<p>{post.content}</p>
-</div>
-))}
-</div>
-);
-}
+      <div>
+        {posts.map((post) => (
+          <div key={post.id} className="border p-3 mb-2 rounded">
+            <p className="font-bold">{post.user.username}</p>
+            <p>{post.content}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Home;
