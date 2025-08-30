@@ -3,20 +3,18 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
+import PrivateRoute from "./components/PrivateRoute";
+import Navbar from "./components/Navbar";
 
 
 function App() {
 return (
 <Router>
-<nav className="p-4 bg-gray-100 flex gap-4">
-<Link to="/">Home</Link>
-<Link to="/profile">Profile</Link>
-<Link to="/login">Login</Link>
-<Link to="/register">Register</Link>
-</nav>
+<Navbar />
 <Routes>
 <Route path="/" element={<Home />} />
-<Route path="/profile" element={<Profile />} />
+<Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+<Route path="/" element={<PrivateRoute><Home /></PrivateRoute>}/>
 <Route path="/login" element={<Login />} />
 <Route path="/register" element={<Register />} />
 </Routes>
