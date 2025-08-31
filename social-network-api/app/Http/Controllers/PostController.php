@@ -47,4 +47,10 @@ return response()->json(['message' => 'Forbidden'], 403);
 $post->delete();
 return response()->json(['message' => 'Deleted']);
 }
+
+
+public function searchPosts(Request $request) {
+    $q = $request->query('q');
+    return Post::where('content', 'like', "%$q%")->get();
+}
 }

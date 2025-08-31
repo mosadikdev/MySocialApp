@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
@@ -26,4 +27,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/posts/{id}/likes', [LikeController::class, 'index']);
     Route::post('/posts/{id}/like', [LikeController::class, 'like']);
     Route::delete('/posts/{id}/like', [LikeController::class, 'unlike']);
+
+
+
+    Route::post('/users/{user}/follow', [UserController::class, 'follow']);
+Route::delete('/users/{user}/follow', [UserController::class, 'unfollow']);
+Route::get('/users/{user}/followers', [UserController::class, 'followers']);
+Route::get('/users/{user}/following', [UserController::class, 'following']);
+
+
+Route::get('/search/users', [UserController::class, 'searchUsers']);
+Route::get('/search/posts', [PostController::class, 'searchPosts']);
+
+
 });
