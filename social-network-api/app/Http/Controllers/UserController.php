@@ -7,28 +7,47 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function follow(User $user) {
-    auth()->user()->following()->attach($user->id);
-    return response()->json(['message' => 'Followed']);
-}
+    public function follow(User $user)
+    {
+        $authUser = auth()->user();
 
-public function unfollow(User $user) {
-    auth()->user()->following()->detach($user->id);
-    return response()->json(['message' => 'Unfollowed']);
-}
+        if ($authUser->id === $user->id) {
+            return response()->json(['message' => 'You cannot follow yourself'], 400);
+        }
 
-public function followers(User $user) {
-    return response()->json($user->followers);
-}
+        $authUser->following()->syncWithoutDetaching([$user->id]);
 
-public function following(User $user) {
-    return response()->json($user->following);
-}
+        return response()->json(['message' => 'Followed']);
+    }
 
+    public function unfollow(User $user)
+    {
+        auth()->user()->following()->detach($user->id);
 
-public function searchUsers(Request $request) {
-    $q = $request->query('q');
-    return User::where('username', 'like', "%$q%")->get();
-}
+        return response()->json(['message' => 'Unfollowed']);
+    }
 
+    public function followers(User $user)
+    {
+        return response()->json($user->followers()->with('followers')->get());
+    }
+
+    public function following(User $user)
+    {
+        return response()->json($user->following()->with('following')->get());
+    }
+
+    public function searchUsers(Request $request)
+    {
+        $q = $request->query('q');
+
+        if (!$q) {
+            return response()->json([], 200);
+        }
+
+        return User::where('username', 'like', "%$q%")
+            ->orWhere('name', 'like', "%$q%")
+            ->limit(20)
+            ->get();
+    }
 }
