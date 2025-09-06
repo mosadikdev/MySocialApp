@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -38,6 +39,11 @@ Route::get('/users/{user}/following', [UserController::class, 'following']);
 
 Route::get('/search/users', [UserController::class, 'searchUsers']);
 Route::get('/search/posts', [PostController::class, 'searchPosts']);
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/messages/{user}', [MessageController::class, 'store']);
+});
 
 
 });
